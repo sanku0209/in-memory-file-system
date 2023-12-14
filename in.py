@@ -13,12 +13,12 @@ class InMemoryFileSystem:
     def __init__(self):
         self.current_directory = '/'
         self.file_system = {}
-
+    # the mkdir command use to make directories
     def mkdir(self, directory_name):
         new_directory_path = os.path.join(self.current_directory, directory_name)
         self.file_system[new_directory_path] = {}
         print(f"Directory '{directory_name}' created.")
-
+    #the cd command use to naviagte the path root and parent directories
     def cd(self, path):
         if path == '/':
             self.current_directory = '/'
@@ -31,12 +31,13 @@ class InMemoryFileSystem:
             self.current_directory = os.path.normpath(os.path.join(self.current_directory, path))
             print(f"Current directory changed to '{self.current_directory}'.")
 
-
+    #the touch command use to import files in specified 
     def touch(self, file_name, path='.'):
         file_path = os.path.normpath(os.path.join(self.current_directory, path.lstrip('/'), file_name))
         self.file_system[file_path] = {'content': ''}
         print(f"File '{file_path}' created.")
-
+    
+    #ls command use to list out the contents of specified directories
     def ls(self, path='.'):
         target_path = os.path.normpath(os.path.join(self.current_directory, path.lstrip('/')))
         if target_path not in self.file_system or not self.file_system[target_path]:
@@ -44,9 +45,6 @@ class InMemoryFileSystem:
         else:
             contents = list(self.file_system[target_path].keys())
             print(f"Contents of {target_path}: {contents}")
-
-
-
 
 
     def grep(self, pattern, path='.'):
@@ -63,10 +61,8 @@ class InMemoryFileSystem:
             print(f"Error: File '{file_path}' not found.")
         else:
             print(f"Contents of {file_path}: {self.file_system[file_path].get('content', '')}")
-
-    
-
-
+            
+    #echo is used to write the text into the file
     def echo(self, content, file_name, path='.'):
         file_path = os.path.join(self.current_directory, path, file_name)
         if file_path not in self.file_system:
@@ -74,7 +70,7 @@ class InMemoryFileSystem:
         else:
             self.file_system[file_path]['content'] = content
             print(f"Content '{content}' written to {file_path}.")
-
+    #mv command used to move from one location to another location
     def mv(self, source, destination):
         source_path = os.path.join(self.current_directory, source)
         destination_path = os.path.join(self.current_directory, destination)
@@ -85,7 +81,8 @@ class InMemoryFileSystem:
         else:
             self.file_system[destination_path] = self.file_system.pop(source_path)
             print(f"Moved '{source_path}' to '{destination_path}'.")
-
+    
+    #copy the content
     def cp(self, source, destination):
         source_path = os.path.join(self.current_directory, source)
         destination_path = os.path.join(self.current_directory, destination)
@@ -96,7 +93,8 @@ class InMemoryFileSystem:
         else:
             self.file_system[destination_path] = json.loads(json.dumps(self.file_system[source_path]))  # Deep copy
             print(f"Copied '{source_path}' to '{destination_path}'.")
-
+            
+    #remove the file
     def rm(self, target, path='.'):
         target_path = os.path.join(self.current_directory, path, target)
         if target_path not in self.file_system:
@@ -114,7 +112,9 @@ class InMemoryFileSystem:
         with open(path, 'r') as file:
             self.file_system = json.load(file)
         print(f"File system state loaded from {path}.")
-
+        
+        
+#the mainfunction runs utill-unlse we use command "exit"
 def main():
     file_system = InMemoryFileSystem()
 
@@ -137,6 +137,14 @@ def main():
                 getattr(file_system, operation)(*args)
             else:
                 print(f"Error: Unknown command '{command}'.")
-
+                
+                
+# it is the function where we can call main function
 if __name__ == "__main__":
     main()
+    
+    
+    
+    
+    
+
